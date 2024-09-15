@@ -1,7 +1,7 @@
 #include<stdio.h>
 int main() {
     int a, b;
-    // a = 5;
+    // a = 5; /* this is constant value input*/
     // b = 10;
     printf("Enter the number a = ");
     scanf("%d", &a);
