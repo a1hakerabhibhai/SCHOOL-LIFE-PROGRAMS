@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playable Ludo Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+
+        .board {
+            display: grid;
+            grid-template-areas: 
+                "blue-section path red-section"
+                "path center path"
+                "yellow-section path green-section";
+            gap: 5px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
+        .section {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid black;
+            position: relative;
+        }
+
+        .circle-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid black;
+            position: relative;
+        }
+
+        .blue { background-color: lightblue; }
+        .yellow { background-color: lightyellow; }
+        .red { background-color: lightcoral; }
+        .green { background-color: lightgreen; }
+
+        .blue-piece { background-color: blue; }
+        .yellow-piece { background-color: yellow; }
+        .red-piece { background-color: red; }
+        .green-piece { background-color: green; }
+
+        .home {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            border: 2px solid black;
+        }
+
+        .path {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border: 2px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .center {
+            grid-area: center;
+            width: 150px;
+            height: 150px;
+            background-color: #fff;
+            border: 2px solid black;
+        }
+
+        .blue-path { grid-area: path; }
+        .yellow-path { grid-area: path; }
+        .red-path { grid-area: path; }
+        .green-path { grid-area: path; }
+
+        .dice-container {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Playable Ludo Game</h1>
+    
+    <!-- Ludo Board -->
+    <div class="board">
+        <!-- Blue Section -->
+        <div class="section blue">
+            <div class="home blue-home"></div>
+            <div class="circle-container">
+                <div class="circle blue-piece" id="blue-piece-1"></div>
+                <div class="circle blue-piece" id="blue-piece-2"></div>
+                <div class="circle blue-piece" id="blue-piece-3"></div>
+                <div class="circle blue-piece" id="blue-piece-4"></div>
+            </div>
+        </div>
+        
+        <!-- Yellow Section -->
+        <div class="section yellow">
+            <div class="home yellow-home"></div>
+            <div class="circle-container">
+                <div class="circle yellow-piece" id="yellow-piece-1"></div>
+                <div class="circle yellow-piece" id="yellow-piece-2"></div>
+                <div class="circle yellow-piece" id="yellow-piece-3"></div>
+                <div class="circle yellow-piece" id="yellow-piece-4"></div>
+            </div>
+        </div>
+        
+        <!-- Red Section -->
+        <div class="section red">
+            <div class="home red-home"></div>
+            <div class="circle-container">
+                <div class="circle red-piece" id="red-piece-1"></div>
+                <div class="circle red-piece" id="red-piece-2"></div>
+                <div class="circle red-piece" id="red-piece-3"></div>
+                <div class="circle red-piece" id="red-piece-4"></div>
+            </div>
+        </div>
+
+        <!-- Green Section -->
+        <div class="section green">
+            <div class="home green-home"></div>
+            <div class="circle-container">
+                <div class="circle green-piece" id="green-piece-1"></div>
+                <div class="circle green-piece" id="green-piece-2"></div>
+                <div class="circle green-piece" id="green-piece-3"></div>
+                <div class="circle green-piece" id="green-piece-4"></div>
+            </div>
+        </div>
+
+        <!-- Paths and Center -->
+        <div class="path blue-path" id="path-blue"></div>
+        <div class="path yellow-path" id="path-yellow"></div>
+        <div class="path red-path" id="path-red"></div>
+        <div class="path green-path" id="path-green"></div>
+        <div class="center"></div>
+    </div>
+
+    <!-- Dice and Turn Section -->
+    <div class="dice-container">
+        <button id="rollDiceBtn">Roll Dice</button>
+        <p id="diceResult">Dice: 1</p>
+        <p>Turn: <span id="currentPlayer">Player 1</span></p>
+        <p id="moveMsg"></p>
+    </div>
+
+    <script>
+        const rollDiceBtn = document.getElementById('rollDiceBtn');
+        const diceResult = document.getElementById('diceResult');
+        const currentPlayerText = document.getElementById('currentPlayer');
+        const moveMsg = document.getElementById('moveMsg');
+
+        let currentPlayer = 1;
+        const players = ['Player 1', 'Player 2', 'Player 3', 'Player 4'];
+        const pieces = {
+            1: ['blue-piece-1', 'blue-piece-2', 'blue-piece-3', 'blue-piece-4'],
+            2: ['yellow-piece-1', 'yellow-piece-2', 'yellow-piece-3', 'yellow-piece-4'],
+            3: ['red-piece-1', 'red-piece-2', 'red-piece-3', 'red-piece-4'],
+            4: ['green-piece-1', 'green-piece-2', 'green-piece-3', 'green-piece-4']
+        };
+        let diceValue;
+
+        function rollDice() {
+            return Math.floor(Math.random() * 6) + 1;
+        }
+
+        function changePlayerTurn() {
+            currentPlayer = (currentPlayer % players.length) + 1;
+            currentPlayerText.innerText = players[currentPlayer - 1];
+        }
+
+        function movePiece(pieceId) {
+            const piece = document.getElementById(pieceId);
+            const path = document.getElementById(`path-${currentPlayer == 1 ? 'blue' : currentPlayer == 2 ? 'yellow' : currentPlayer == 3 ? 'red' : 'green'}`);
+            if (piece && path) {
+                piece.style.position = "absolute";
+                piece.style.left = path.offsetLeft + 10 + 'px';
+                piece.style.top = path.offsetTop + 10 + 'px';
+                moveMsg.innerText = `${players[currentPlayer - 1]} moved piece ${pieceId.split('-')[2]}`;
+            }
+        }
+
+        rollDiceBtn.addEventListener('click', function () {
+            diceValue = rollDice();
+            diceResult.innerText = 'Dice: ' + diceValue;
+
+            const pieceId = pieces[currentPlayer][Math.floor(Math.random() * 4)];
+            movePiece(pieceId);
+
+            changePlayerTurn();
+        });
+    </script>
+</body>
+</html>
