@@ -1,5 +1,5 @@
 #include<iostream>
-#include<conio.h>
+// #include<conio.h>
 using namespace std;
 int sum(int, int);  // Function prototype
 int s;  // Global variable
@@ -11,7 +11,7 @@ int s;  // Global variable
 
     s = sum(a, b);  // Store result in 's'
     cout << "Sum = " << s;  // Output the sum
-    getch();
+    // getch();
     return 0;  // Return 0 from main
 }
 
