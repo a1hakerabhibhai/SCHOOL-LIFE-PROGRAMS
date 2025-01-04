@@ -6,6 +6,6 @@ int main(){
     cin>>a;
     cout<<" Enter the number b = ";
     cin>>b;
-    cout<<"The different is "<<a-b;
+    cout<<"The sub is "<<a-b;
     return 0;
 }
